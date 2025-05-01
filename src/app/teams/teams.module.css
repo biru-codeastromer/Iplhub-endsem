@@ -1,0 +1,745 @@
+/* Add to your global.css or teams.module.css */
+:root {
+  --background: #0a0a0a;
+  --foreground: #ffffff;
+  --primary: #6d0f24; /* Dark maroon */
+  --secondary: #9d1d36; /* Brighter maroon */
+  --accent: #d1264d;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+/* Enhance the dark theme for your components */
+.teamCard {
+  background: rgba(10, 10, 10, 0.7) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(109, 15, 36, 0.3) !important;
+}
+
+.teamDetails {
+  background: rgba(10, 10, 10, 0.8) !important;
+  border: 1px solid var(--primary) !important;
+  box-shadow: 0 0 30px rgba(109, 15, 36, 0.3) !important;
+}
+
+/* Add star twinkling effect */
+@keyframes twinkle {
+  0% { opacity: 0.2; }
+  50% { opacity: 1; }
+  100% { opacity: 0.2; }
+}
+
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 3s infinite;
+}
+
+/* Reuse your existing styles from homepage where applicable */
+.container {
+    min-height: 100vh;
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: 'Inter', 'Geist Sans', Arial, sans-serif;
+    position: relative;
+    overflow-x: hidden;
+  }
+  
+/* Vanta Background Container */
+.vantaContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* Behind everything */
+}
+
+/* Ensure content has proper z-index */
+.container {
+  position: relative;
+  z-index: 1;
+}
+
+.navbar {
+  position: relative;
+  z-index: 10;
+}
+
+.mainContent {
+  position: relative;
+  z-index: 5;
+}
+
+/* Remove old glow background styles */
+.glowBackground,
+.glowPurple,
+.glowBlue {
+  display: none;
+}
+  
+  /* Navbar Styles */
+  .navbar {
+    position: relative;
+    z-index: 10;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .logoText {
+    font-size: 24px;
+    font-weight: 700;
+    background: linear-gradient(to right, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  
+  .navLinks {
+    display: none;
+    gap: 32px;
+  }
+  
+  .navLink {
+    color: var(--foreground);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    position: relative;
+  }
+  
+  .navLink:hover {
+    color: var(--primary);
+  }
+  
+  .activeLink {
+    color: var(--primary);
+    font-weight: 600;
+  }
+  
+  .navLink::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--primary);
+    transition: width 0.3s ease;
+  }
+  
+  .navLink:hover::after,
+  .activeLink::after {
+    width: 100%;
+  }
+  
+  .connectButton {
+    padding: 8px 24px;
+    background: linear-gradient(to right, var(--primary), var(--secondary));
+    border: none;
+    border-radius: 9999px;
+    color: var(--foreground);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .connectButton:hover {
+    box-shadow: 0 0 20px rgba(var(--primary-rgb), 0.3);
+    transform: translateY(-1px);
+  }
+  
+  /* Main Content Styles */
+  .mainContent {
+    position: relative;
+    z-index: 5;
+    padding: 20px 0 80px;
+  }
+  
+  .sectionTitle {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-align: center;
+    position: relative;
+    width: 100%;
+  }
+  
+  .gradientText {
+    background: linear-gradient(to right, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  
+  /* Teams Slider Styles */
+  .teamsSliderSection {
+    padding: 40px 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  
+  .sliderContainer {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin: 0 auto;
+    max-width: 1200px;
+  }
+  
+  .teamsSlider {
+    display: flex;
+    gap: 20px;
+    padding: 20px 0;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+    width: 100%;
+  }
+  
+  .teamsSlider::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+  
+  .teamCard {
+    flex: 0 0 180px;
+    height: 220px;
+    background: rgba(var(--white-rgb), 0.05);
+    backdrop-filter: blur(5px);
+    border: 3px solid transparent;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .teamCard:hover {
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  }
+  
+  .teamCard.active {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+  }
+  
+  .teamLogoContainer {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 15px;
+    position: relative;
+  }
+  
+  .logoPlaceholder {
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+  }
+  
+  .teamName {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 10px 0 0;
+    text-align: center;
+  }
+  
+  .sliderButton {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    background: rgba(var(--white-rgb), 0.1);
+    backdrop-filter: blur(5px);
+    border: none;
+    border-radius: 50%;
+    color: var(--foreground);
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: all 0.3s ease;
+  }
+  
+  .sliderButton:hover {
+    background: rgba(var(--white-rgb), 0.2);
+    transform: translateY(-50%) scale(1.1);
+  }
+  
+  .sliderButton.disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  
+  .leftButton {
+    left: -25px;
+  }
+  
+  .rightButton {
+    right: -25px;
+  }
+  
+  /* Team Details Styles */
+  .teamDetails {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 30px;
+    background: rgba(var(--white-rgb), 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .teamHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  
+  .teamLogoLarge {
+    width: 150px;
+    height: 150px;
+    margin-bottom: 20px;
+  }
+  
+  .teamInfo {
+    text-align: center;
+  }
+  
+  .teamFullName {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    background: linear-gradient(to right, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  
+  .teamMeta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    color: rgba(var(--foreground), 0.8);
+  }
+  
+  .teamMeta span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .teamMeta strong {
+    color: var(--foreground);
+    font-weight: 600;
+  }
+  
+  .trophyCount {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(var(--white-rgb), 0.1);
+    border-radius: 9999px;
+    font-weight: 600;
+  }
+  
+  .trophyIcon {
+    font-size: 1.2rem;
+  }
+  
+  .teamDescription {
+    margin-bottom: 30px;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: rgba(var(--foreground), 0.9);
+  }
+  
+  .subSectionTitle {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    position: relative;
+    display: inline-block;
+  }
+  
+  .subSectionTitle::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(to right, var(--primary), var(--secondary));
+    border-radius: 3px;
+  }
+  
+  .achievementsList {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 30px;
+  }
+  
+  .achievementItem {
+    margin-bottom: 12px;
+    padding-left: 25px;
+    position: relative;
+    line-height: 1.5;
+  }
+  
+  .bulletPoint {
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+  
+  /* Stats Grid */
+  .statsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+  
+  .statCard {
+    background: rgba(var(--white-rgb), 0.05);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+  
+  .statCard:hover {
+    background: rgba(var(--white-rgb), 0.1);
+    transform: translateY(-3px);
+  }
+  
+  .statValue {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+  
+  .statLabel {
+    font-size: 0.9rem;
+    color: rgba(var(--foreground), 0.7);
+  }
+  
+  /* Players Grid */
+  .playersGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+  
+  .playerCard {
+    background: rgba(var(--white-rgb), 0.05);
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+  
+  .playerCard:hover {
+    background: rgba(var(--white-rgb), 0.1);
+    transform: translateY(-3px);
+  }
+  
+  .playerImage {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto 10px;
+    background: rgba(var(--white-rgb), 0.1);
+  }
+  
+  .playerName {
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  
+  .playerRole {
+    font-size: 0.8rem;
+    color: rgba(var(--foreground), 0.7);
+  }
+  
+  /* All Teams Grid */
+  .allTeamsSection {
+    max-width: 1400px;
+    margin: 60px auto;
+    padding: 0 20px;
+  }
+  
+  .allTeamsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .teamGridCard {
+    background: rgba(var(--white-rgb), 0.05);
+    backdrop-filter: blur(5px);
+    border-radius: 16px;
+    padding: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .teamGridCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  }
+  
+  .teamGridLogo {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 15px;
+  }
+  
+  .teamGridName {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  
+  .teamGridMeta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: rgba(var(--foreground), 0.7);
+    margin-bottom: 15px;
+  }
+  
+  .viewTeamButton {
+    width: 100%;
+    padding: 8px 16px;
+    background: rgba(var(--white-rgb), 0.1);
+    border: none;
+    border-radius: 9999px;
+    color: var(--foreground);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .viewTeamButton:hover {
+    background: rgba(var(--white-rgb), 0.2);
+  }
+  
+  .viewTeamButton svg {
+    transition: transform 0.3s ease;
+  }
+  
+  .viewTeamButton:hover svg {
+    transform: translateX(3px);
+  }
+  
+  /* Loading Overlay Styles */
+  .loadingOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .loadingParticles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  
+  .loadingParticle {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: linear-gradient(to right, var(--primary), var(--accent));
+    border-radius: 50%;
+    opacity: 0.7;
+    animation: floatParticle 5s infinite ease-in-out;
+  }
+  
+  @keyframes floatParticle {
+    0%, 100% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+    25% {
+      transform: translate(50px, -30px) rotate(90deg);
+    }
+    50% {
+      transform: translate(0, -60px) rotate(180deg);
+    }
+    75% {
+      transform: translate(-50px, -30px) rotate(270deg);
+    }
+  }
+  
+  /* Responsive Styles */
+  @media (min-width: 768px) {
+    .navLinks {
+      display: flex;
+    }
+    
+    .teamHeader {
+      flex-direction: row;
+      text-align: left;
+      align-items: center;
+    }
+    
+    .teamLogoLarge {
+      margin-right: 30px;
+      margin-bottom: 0;
+    }
+    
+    .teamInfo {
+      text-align: left;
+    }
+    
+    .statsGrid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .playersGrid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .allTeamsGrid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .sectionTitle {
+      font-size: 3rem;
+    }
+    
+    .teamFullName {
+      font-size: 2.5rem;
+    }
+    
+    .allTeamsGrid {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
+  
+  @media (min-width: 1200px) {
+    .teamCard {
+      flex: 0 0 220px;
+      height: 260px;
+    }
+  }
+
+/* 3D Logo Styles */
+.logo3D {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  transform-style: preserve-3d;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 0 10px rgba(255, 255, 255, 0.2),
+    0 0 20px rgba(255, 255, 255, 0.1),
+    inset 0 0 20px rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.logo3D::before {
+  content: '';
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  width: 120%;
+  height: 120%;
+  background: linear-gradient(
+    45deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transform: rotate(45deg);
+  transition: all 0.5s ease;
+}
+
+.logo3D:hover {
+  transform: rotateY(20deg) scale(1.1);
+  box-shadow: 
+    0 0 20px rgba(255, 255, 255, 0.3),
+    0 0 40px rgba(255, 255, 255, 0.2),
+    inset 0 0 30px rgba(255, 255, 255, 0.2);
+}
+
+.logo3D:hover::before {
+  left: 100%;
+}
+
+.logoSmall {
+  width: 60px;
+  height: 60px;
+  font-size: 24px;
+}
+
+.logoMedium {
+  width: 100px;
+  height: 100px;
+  font-size: 40px;
+}
+
+.logoLarge {
+  width: 150px;
+  height: 150px;
+  font-size: 60px;
+}
+
+.logoImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}

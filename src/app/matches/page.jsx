@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Points, PointMaterial } from '@react-three/drei';
 import * as random from 'maath/random/dist/maath-random.esm';
-import { FiArrowRight } from "react-icons/fi";
+import { FiArrowRight, FiChevronLeft, FiChevronRight, FiSearch, FiX } from "react-icons/fi";
 import styles from "../page.module.css";
 import { rubik80sFade } from '../layout.js';
 
@@ -128,9 +128,17 @@ function SpaceLoader() {
 }
 
 export default function MatchesPage() {
-  const [matchesData, setMatchesData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [showLoader, setShowLoader] = useState(true);
+    const [matchesData, setMatchesData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [showLoader, setShowLoader] = useState(true);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [isFlipping, setIsFlipping] = useState(false);
+    const [flipDirection, setFlipDirection] = useState('right');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedTeams, setSelectedTeams] = useState([]);
+    const [selectedVenues, setSelectedVenues] = useState([]);
+    const bookRef = useRef();
+
 
   // Sample data structure that matches your provided schedule
   const sampleMatchesData = [
@@ -900,6 +908,32 @@ export default function MatchesPage() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Get unique teams and venues for filters
+  const allTeams = [...new Set(
+    sampleMatchesData.flatMap(match => [match.team1, match.team2])
+  )].sort();
+
+  const allVenues = [...new Set(
+    sampleMatchesData.map(match => match.venue)
+  )].sort();
+
+  // Filter matches based on search and filters
+  const filteredMatches = matchesData.filter(match => {
+    const matchesSearch = match.matchNumber.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                         match.venue.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         match.team1.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         match.team2.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesTeams = selectedTeams.length === 0 || 
+                        selectedTeams.includes(match.team1) || 
+                        selectedTeams.includes(match.team2);
+
+    const matchesVenues = selectedVenues.length === 0 || 
+                         selectedVenues.includes(match.venue);
+
+    return matchesSearch && matchesTeams && matchesVenues;
+  });
+
   const getTeamLogo = (teamName) => {
     const logos = {
       "Kolkata Knight Riders": "/kkr.jpeg",
@@ -916,28 +950,68 @@ export default function MatchesPage() {
     return logos[teamName] || "/IPL.jpeg";
   };
 
+  const toggleTeamFilter = (team) => {
+    setSelectedTeams(prev => 
+      prev.includes(team) 
+        ? prev.filter(t => t !== team) 
+        : [...prev, team]
+    );
+    setCurrentPage(0);
+  };
+
+  const toggleVenueFilter = (venue) => {
+    setSelectedVenues(prev => 
+      prev.includes(venue) 
+        ? prev.filter(v => v !== venue) 
+        : [...prev, venue]
+    );
+    setCurrentPage(0);
+  };
+
+  const clearAllFilters = () => {
+    setSearchTerm('');
+    setSelectedTeams([]);
+    setSelectedVenues([]);
+    setCurrentPage(0);
+  };
+
+  const flipPage = (direction) => {
+    if (isFlipping || filteredMatches.length === 0) return;
+    
+    setIsFlipping(true);
+    setFlipDirection(direction);
+    
+    setTimeout(() => {
+      setCurrentPage(prev => {
+        const newPage = direction === 'next' 
+          ? Math.min(prev + 1, filteredMatches.length - 1)
+          : Math.max(prev - 1, 0);
+        return newPage;
+      });
+      setIsFlipping(false);
+    }, 500);
+  };
+
   const MatchCard = ({ match }) => {
     return (
-      <div style={{
-        backgroundColor: 'rgba(15, 15, 25, 0.7)',
+      <div className="match-card" style={{
+        backgroundColor: 'rgba(15, 15, 25, 0.9)',
         borderRadius: '12px',
-        padding: '20px',
-        border: '1px solid rgba(255, 235, 59, 0.1)',
-        transition: 'all 0.3s ease',
-        ':hover': {
-          transform: 'translateY(-3px)',
-          boxShadow: '0 4px 6px rgba(255, 235, 59, 0.1)',
-          borderColor: 'rgba(255, 235, 59, 0.3)'
-        }
+        padding: '30px',
+        border: '1px solid rgba(255, 235, 59, 0.2)',
+        width: '100%',
+        maxWidth: '600px',
+        margin: '0 auto',
+        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)'
       }}>
         {/* Match header */}
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginBottom: '10px',
-          fontSize: '0.9rem',
-          color: 'rgba(255,255,255,0.7)',
+          marginBottom: '20px',
+          fontSize: '1rem',
+          color: 'rgba(255,255,255,0.8)',
           fontFamily: 'var(--font-audiowide), sans-serif'
         }}>
           <span>{match.matchNumber} • {match.venue}</span>
@@ -949,36 +1023,76 @@ export default function MatchesPage() {
           display: 'flex', 
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginBottom: '15px'
+          marginBottom: '30px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ width: '30px', height: '30px', position: 'relative' }}>
+          <div style={{ 
+            display: 'flex', 
+            flexDirection: 'column',
+            alignItems: 'center', 
+            gap: '15px',
+            width: '40%'
+          }}>
+            <div style={{ 
+              width: '80px', 
+              height: '80px', 
+              position: 'relative',
+              borderRadius: '50%',
+              overflow: 'hidden',
+              border: '2px solid rgba(255, 255, 255, 0.1)'
+            }}>
               <Image 
                 src={getTeamLogo(match.team1)} 
                 alt={match.team1} 
                 layout="fill"
-                objectFit="contain"
+                objectFit="cover"
               />
             </div>
-            <span style={{ fontFamily: 'var(--font-audiowide), sans-serif' }}>{match.team1}</span>
+            <span style={{ 
+              fontFamily: 'var(--font-audiowide), sans-serif',
+              fontSize: '1.1rem',
+              textAlign: 'center'
+            }}>
+              {match.team1}
+            </span>
           </div>
           
           <div style={{ 
-            fontSize: '1.2rem', 
+            fontSize: '1.5rem', 
             fontWeight: '600',
-            fontFamily: 'var(--font-rubik), sans-serif'
+            fontFamily: 'var(--font-rubik), sans-serif',
+            color: '#ffeb3b',
+            margin: '0 20px'
           }}>
             vs
           </div>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontFamily: 'var(--font-audiowide), sans-serif' }}>{match.team2}</span>
-            <div style={{ width: '30px', height: '30px', position: 'relative' }}>
+          <div style={{ 
+            display: 'flex', 
+            flexDirection: 'column',
+            alignItems: 'center', 
+            gap: '15px',
+            width: '40%'
+          }}>
+            <span style={{ 
+              fontFamily: 'var(--font-audiowide), sans-serif',
+              fontSize: '1.1rem',
+              textAlign: 'center'
+            }}>
+              {match.team2}
+            </span>
+            <div style={{ 
+              width: '80px', 
+              height: '80px', 
+              position: 'relative',
+              borderRadius: '50%',
+              overflow: 'hidden',
+              border: '2px solid rgba(255, 255, 255, 0.1)'
+            }}>
               <Image 
                 src={getTeamLogo(match.team2)} 
                 alt={match.team2} 
                 layout="fill"
-                objectFit="contain"
+                objectFit="cover"
               />
             </div>
           </div>
@@ -988,24 +1102,35 @@ export default function MatchesPage() {
         {match.matchStatus === 'completed' ? (
           <div style={{ 
             backgroundColor: 'rgba(255,255,255,0.1)',
-            padding: '10px',
-            borderRadius: '8px',
-            marginTop: '10px',
+            padding: '20px',
+            borderRadius: '12px',
+            marginTop: '20px',
             fontFamily: 'var(--font-audiowide), sans-serif'
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              marginBottom: '10px',
+              fontSize: '1.1rem'
+            }}>
               <span>{match.team1}</span>
               <span>{match.team1Score}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              marginBottom: '10px',
+              fontSize: '1.1rem'
+            }}>
               <span>{match.team2}</span>
               <span>{match.team2Score}</span>
             </div>
             <div style={{ 
               textAlign: 'center', 
-              marginTop: '10px',
+              marginTop: '15px',
               color: '#8b5cf6',
-              fontWeight: '600'
+              fontWeight: '600',
+              fontSize: '1.1rem'
             }}>
               {match.result}
             </div>
@@ -1014,8 +1139,9 @@ export default function MatchesPage() {
           <div style={{ 
             textAlign: 'center',
             color: 'rgba(255,255,255,0.7)',
-            marginTop: '10px',
-            fontFamily: 'var(--font-audiowide), sans-serif'
+            marginTop: '20px',
+            fontFamily: 'var(--font-audiowide), sans-serif',
+            fontSize: '1.1rem'
           }}>
             {match.time || 'Time TBD'}
           </div>
@@ -1088,25 +1214,6 @@ export default function MatchesPage() {
           margin: '0 auto'
         }}>
       
-        {/* Darker 3D Galaxy Background */}
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          zIndex: -1,
-          background: 'linear-gradient(to bottom, #000000, #0a0a1a, #000000)'
-        }}>
-          <Canvas camera={{ position: [0, 0, 1] }}>
-            <Stars />
-            {/* Nebula effect - optional */}
-            <ambientLight intensity={0.1} />
-            <pointLight position={[10, 10, 10]} color="#3700ff" intensity={0.3} />
-            <pointLight position={[-10, -10, -10]} color="#ff00c8" intensity={0.3} />
-          </Canvas>
-        </div>
-    
         {/* Darker content background */}
         <div style={{
           borderRadius: '12px',
@@ -1116,33 +1223,162 @@ export default function MatchesPage() {
           boxShadow: '0 0 20px rgba(0, 0, 0, 0.5)'
         }}>
           <div style={{ marginBottom: '30px' }}>
-          <h1 style={{
-            fontSize: '2rem',
-            fontWeight: '700',
-            WebkitBackgroundClip: 'text',
-            backgroundClip: 'text',
-            margin: 0,
-            textShadow: '0 0 8px rgba(255, 235, 59, 0.3)',
-            fontFamily: 'var(--font-rubik), sans-serif'
+            <h1 style={{
+              fontSize: '2rem',
+              fontWeight: '700',
+              WebkitBackgroundClip: 'text',
+              backgroundClip: 'text',
+              margin: 0,
+              textShadow: '0 0 8px rgba(255, 235, 59, 0.3)',
+              fontFamily: 'var(--font-rubik), sans-serif'
             }}>
-            IPL 2025 Schedule
-          </h1>
-          </div> 
+              IPL 2025 Schedule
+            </h1>
+          </div>
+
+          {/* Search and Filters Section */}
+          <div className="filters-section">
+            <div className="search-box">
+              <FiSearch className="search-icon" />
+              <input
+                type="text"
+                placeholder="Search matches..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(0);
+                }}
+                className="search-input"
+              />
+              {searchTerm && (
+                <button 
+                  onClick={() => setSearchTerm('')}
+                  className="clear-search"
+                >
+                  <FiX />
+                </button>
+              )}
+            </div>
+
+            <div className="filter-groups">
+              <div className="filter-group">
+                <h3>Filter by Team:</h3>
+                <div className="filter-options">
+                  {allTeams.map(team => (
+                    <button
+                      key={team}
+                      onClick={() => toggleTeamFilter(team)}
+                      className={`filter-option ${selectedTeams.includes(team) ? 'active' : ''}`}
+                    >
+                      {team}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="filter-group">
+                <h3>Filter by Venue:</h3>
+                <div className="filter-options">
+                  {allVenues.map(venue => (
+                    <button
+                      key={venue}
+                      onClick={() => toggleVenueFilter(venue)}
+                      className={`filter-option ${selectedVenues.includes(venue) ? 'active' : ''}`}
+                    >
+                      {venue}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {(searchTerm || selectedTeams.length > 0 || selectedVenues.length > 0) && (
+              <div className="active-filters">
+                <span>Active filters:</span>
+                {searchTerm && (
+                  <span className="active-filter">
+                    Search: "{searchTerm}"
+                    <button onClick={() => setSearchTerm('')}>
+                      <FiX size={14} />
+                    </button>
+                  </span>
+                )}
+                {selectedTeams.map(team => (
+                  <span key={team} className="active-filter">
+                    Team: {team}
+                    <button onClick={() => toggleTeamFilter(team)}>
+                      <FiX size={14} />
+                    </button>
+                  </span>
+                ))}
+                {selectedVenues.map(venue => (
+                  <span key={venue} className="active-filter">
+                    Venue: {venue}
+                    <button onClick={() => toggleVenueFilter(venue)}>
+                      <FiX size={14} />
+                    </button>
+                  </span>
+                ))}
+                <button 
+                  onClick={clearAllFilters}
+                  className="clear-all"
+                >
+                  Clear all
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {loading ? (
           <SpaceLoader />
-        ) : (
-          <div style={{ display: 'grid', gap: '15px' }}>
-            {matchesData.length > 0 ? (
-              matchesData.map((match, index) => (
-                <MatchCard key={index} match={match} />
-              ))
-            ) : (
-              <div style={{ fontFamily: 'var(--font-audiowide), sans-serif' }}>
-                  No matches found
+        ) : filteredMatches.length > 0 ? (
+          <div className="book-container">
+            <div className="book-controls">
+              <button 
+                className={`flip-button prev ${currentPage === 0 ? 'disabled' : ''}`}
+                onClick={() => flipPage('prev')}
+                disabled={currentPage === 0 || isFlipping}
+              >
+                <FiChevronLeft size={24} />
+              </button>
+              
+              <div className="page-indicator">
+                Match {currentPage + 1} of {filteredMatches.length}
+                {filteredMatches.length !== matchesData.length && (
+                  <span className="filtered-count">
+                    (Filtered from {matchesData.length})
+                  </span>
+                )}
               </div>
-            )}
+              
+              <button 
+                className={`flip-button next ${currentPage >= filteredMatches.length - 1 ? 'disabled' : ''}`}
+                onClick={() => flipPage('next')}
+                disabled={currentPage >= filteredMatches.length - 1 || isFlipping}
+              >
+                <FiChevronRight size={24} />
+              </button>
+            </div>
+            
+            <div 
+              className={`book ${isFlipping ? `flipping-${flipDirection}` : ''}`} 
+              ref={bookRef}
+            >
+              <div className="book-page">
+                <MatchCard match={filteredMatches[currentPage]} />
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="no-results">
+            <h3>No matches found matching your filters</h3>
+            <button 
+              onClick={clearAllFilters}
+              className="clear-filters-button"
+            >
+              Clear all filters
+            </button>
           </div>
         )}
       </div>
@@ -1165,6 +1401,295 @@ export default function MatchesPage() {
           </div>
         </div>
       </footer>
+
+      <style jsx global>{`
+        @keyframes pulse {
+          0% { transform: translate(-50%, -50%) scale(1); }
+          50% { transform: translate(-50%, -50%) scale(1.1); }
+          100% { transform: translate(-50%, -50%) scale(1); }
+        }
+        @keyframes orbit {
+          from { transform: translate(-50%, -50%) rotate(0deg) translate(35px) rotate(0deg); }
+          to { transform: translate(-50%, -50%) rotate(360deg) translate(35px) rotate(-360deg); }
+        }
+        
+        .book-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          margin-top: 30px;
+          perspective: 2000px;
+        }
+        
+        .book {
+          position: relative;
+          width: 100%;
+          max-width: 700px;
+          height: 500px;
+          transform-style: preserve-3d;
+          transition: transform 0.8s ease;
+        }
+        
+        .book.flipping-next {
+          animation: flipNext 0.8s ease forwards;
+        }
+        
+        .book.flipping-prev {
+          animation: flipPrev 0.8s ease forwards;
+        }
+        
+        @keyframes flipNext {
+          0% { transform: rotateY(0deg); }
+          50% { transform: rotateY(-90deg); }
+          100% { transform: rotateY(-180deg); }
+        }
+        
+        @keyframes flipPrev {
+          0% { transform: rotateY(-180deg); }
+          50% { transform: rotateY(-90deg); }
+          100% { transform: rotateY(0deg); }
+        }
+        
+        .book-page {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          backface-visibility: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        .book-controls {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 30px;
+          margin-bottom: 30px;
+          width: 100%;
+        }
+        
+        .flip-button {
+          background: rgba(255, 255, 255, 0.1);
+          border: none;
+          color: white;
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .flip-button:hover:not(.disabled) {
+          background: rgba(255, 255, 255, 0.2);
+          transform: scale(1.1);
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .flip-button.disabled {
+          opacity: 0.3;
+          cursor: not-allowed;
+          transform: none !important;
+        }
+        
+        .page-indicator {
+          color: rgba(255, 255, 255, 0.8);
+          font-size: 1.1rem;
+          font-family: var(--font-audiowide), sans-serif;
+          min-width: 150px;
+          text-align: center;
+        }
+        
+        .match-card {
+          position: relative;
+          z-index: 1;
+          transform-style: preserve-3d;
+          transition: transform 0.5s ease, box-shadow 0.5s ease;
+        }
+        
+        .match-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6) !important;
+        }
+        .filters-section {
+          margin-bottom: 30px;
+        }
+        
+        .search-box {
+          position: relative;
+          margin-bottom: 20px;
+          width: 100%;
+          max-width: 500px;
+        }
+        
+        .search-icon {
+          position: absolute;
+          left: 15px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .search-input {
+          width: 100%;
+          padding: 12px 20px 12px 45px;
+          border-radius: 25px;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          background: rgba(0, 0, 0, 0.3);
+          color: white;
+          font-size: 1rem;
+          transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+          outline: none;
+          border-color: #8b5cf6;
+          box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+        }
+        
+        .clear-search {
+          position: absolute;
+          right: 15px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: none;
+          border: none;
+          color: rgba(255, 255, 255, 0.7);
+          cursor: pointer;
+          padding: 5px;
+        }
+        
+        .filter-groups {
+          display: flex;
+          gap: 30px;
+          margin-bottom: 20px;
+          flex-wrap: wrap;
+        }
+        
+        .filter-group {
+          flex: 1;
+          min-width: 250px;
+        }
+        
+        .filter-group h3 {
+          margin-bottom: 10px;
+          color: rgba(255, 255, 255, 0.9);
+          font-size: 1rem;
+        }
+        
+        .filter-options {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+        
+        .filter-option {
+          padding: 8px 15px;
+          border-radius: 20px;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          background: rgba(0, 0, 0, 0.3);
+          color: white;
+          font-size: 0.9rem;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+        
+        .filter-option:hover {
+          background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .filter-option.active {
+          background: #8b5cf6;
+          border-color: #8b5cf6;
+          color: white;
+        }
+        
+        .active-filters {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: 10px;
+          margin-top: 15px;
+          font-size: 0.9rem;
+        }
+        
+        .active-filters span:first-child {
+          color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .active-filter {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          padding: 5px 10px;
+          border-radius: 15px;
+          background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .active-filter button {
+          background: none;
+          border: none;
+          color: rgba(255, 255, 255, 0.7);
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+        }
+        
+        .clear-all {
+          margin-left: 10px;
+          padding: 5px 10px;
+          border-radius: 15px;
+          background: rgba(255, 255, 255, 0.1);
+          border: none;
+          color: #ff5252;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+        
+        .clear-all:hover {
+          background: rgba(255, 82, 82, 0.2);
+        }
+        
+        .filtered-count {
+          font-size: 0.8rem;
+          color: rgba(255, 255, 255, 0.6);
+          margin-left: 8px;
+        }
+        
+        .no-results {
+          text-align: center;
+          padding: 40px;
+          background: rgba(0, 0, 0, 0.3);
+          border-radius: 12px;
+          margin-top: 30px;
+        }
+        
+        .no-results h3 {
+          color: rgba(255, 255, 255, 0.8);
+          margin-bottom: 20px;
+        }
+        
+        .clear-filters-button {
+          padding: 10px 20px;
+          border-radius: 25px;
+          background: #8b5cf6;
+          border: none;
+          color: white;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+        
+        .clear-filters-button:hover {
+          background: #7c4dff;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+        }
+      `}</style>
     </div>
   );
 }

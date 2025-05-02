@@ -7,7 +7,7 @@ import { Points, PointMaterial } from '@react-three/drei';
 import * as random from 'maath/random/dist/maath-random.esm';
 import { FiArrowRight, FiChevronLeft, FiChevronRight, FiSearch, FiX } from "react-icons/fi";
 import styles from "../page.module.css";
-import { rubik80sFade } from '../layout.js';
+import { poiretOne } from '../layout.js';
 
 function Stars(props) {
     const ref = useRef();
@@ -1012,7 +1012,7 @@ export default function MatchesPage() {
           marginBottom: '20px',
           fontSize: '1rem',
           color: 'rgba(255,255,255,0.8)',
-          fontFamily: 'var(--font-audiowide), sans-serif'
+          fontFamily: 'var(--font-recursive), sans-serif'
         }}>
           <span>{match.matchNumber} • {match.venue}</span>
           <span>{match.date}</span>
@@ -1048,7 +1048,7 @@ export default function MatchesPage() {
               />
             </div>
             <span style={{ 
-              fontFamily: 'var(--font-audiowide), sans-serif',
+              fontFamily: 'var(--font-recursive), sans-serif',
               fontSize: '1.1rem',
               textAlign: 'center'
             }}>
@@ -1059,7 +1059,7 @@ export default function MatchesPage() {
           <div style={{ 
             fontSize: '1.5rem', 
             fontWeight: '600',
-            fontFamily: 'var(--font-rubik), sans-serif',
+            fontFamily: 'var(--font-poiret), sans-serif',
             color: '#ffeb3b',
             margin: '0 20px'
           }}>
@@ -1074,7 +1074,7 @@ export default function MatchesPage() {
             width: '40%'
           }}>
             <span style={{ 
-              fontFamily: 'var(--font-audiowide), sans-serif',
+              fontFamily: 'var(--font-recursive), sans-serif',
               fontSize: '1.1rem',
               textAlign: 'center'
             }}>
@@ -1105,7 +1105,7 @@ export default function MatchesPage() {
             padding: '20px',
             borderRadius: '12px',
             marginTop: '20px',
-            fontFamily: 'var(--font-audiowide), sans-serif'
+            fontFamily: 'var(--font-recursive), sans-serif'
           }}>
             <div style={{ 
               display: 'flex', 
@@ -1140,7 +1140,7 @@ export default function MatchesPage() {
             textAlign: 'center',
             color: 'rgba(255,255,255,0.7)',
             marginTop: '20px',
-            fontFamily: 'var(--font-audiowide), sans-serif',
+            fontFamily: 'var(--font-recursive), sans-serif',
             fontSize: '1.1rem'
           }}>
             {match.time || 'Time TBD'}
@@ -1151,7 +1151,7 @@ export default function MatchesPage() {
   };
 
   return (
-    <div className={`${styles.container} ${rubik80sFade.className}`}>
+    <div className={`${styles.container} ${poiretOne.className}`}>
       {/* Glowing background elements */}
       <div className={styles.glowBackground}>
         <div className={styles.glowPurple}></div>
@@ -1208,7 +1208,7 @@ export default function MatchesPage() {
           position: 'relative',
           minHeight: '100vh',
           color: '#fafafa',
-          fontFamily: 'var(--font-audiowide), sans-serif',
+          fontFamily: 'var(--font-recursive), sans-serif',
           padding: '20px',
           maxWidth: '1200px',
           margin: '0 auto'
@@ -1230,7 +1230,7 @@ export default function MatchesPage() {
               backgroundClip: 'text',
               margin: 0,
               textShadow: '0 0 8px rgba(255, 235, 59, 0.3)',
-              fontFamily: 'var(--font-rubik), sans-serif'
+              fontFamily: 'var(--font-poiret), sans-serif'
             }}>
               IPL 2025 Schedule
             </h1>
@@ -1499,7 +1499,7 @@ export default function MatchesPage() {
         .page-indicator {
           color: rgba(255, 255, 255, 0.8);
           font-size: 1.1rem;
-          font-family: var(--font-audiowide), sans-serif;
+          font-family: var(--font-recursive), sans-serif;
           min-width: 150px;
           text-align: center;
         }

@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import styles from '../page.module.css';
 import { FiBarChart2, FiUsers, FiAward, FiSend, FiMessageSquare } from "react-icons/fi";
-import { rubik80sFade } from '../layout';
+import { poiretOne } from '../layout';
 import Image from 'next/image';
 
 export default function StatsPage() {
@@ -84,7 +84,7 @@ export default function StatsPage() {
   };
 
   return (
-    <div className={`${styles.container} ${rubik80sFade.className}`}>
+    <div className={`${styles.container} ${poiretOne.className}`}>
       {/* Glowing background elements */}
       <div className={styles.glowBackground}>
         <div className={styles.glowPurple}></div>

@@ -7,7 +7,7 @@ import Image from "next/image";
 import { FiArrowRight } from "react-icons/fi";
 import styles from "../page.module.css";
 import playerStyles from "./players.module.css";
-import { rubik80sFade } from '../layout.js';
+import { poiretOne } from '../layout.js';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -75,7 +75,7 @@ export default function PlayersGallery() {
   }, { scope: containerRef });
 
   return (
-    <div className={`${styles.container} ${rubik80sFade.className}`} ref={containerRef}>
+    <div className={`${styles.container} ${poiretOne.className}`} ref={containerRef}>
       {/* Glowing background elements */}
       <div className={styles.glowBackground}>
         <div className={styles.glowPurple}></div>
@@ -140,7 +140,7 @@ export default function PlayersGallery() {
         
         <p
           className={`${styles.heroSubtitle} ${styles.textFadeIn}`}
-          style={{ fontFamily: "var(--font-audiowide)" }}
+          style={{ fontFamily: "var(--font-recursive)" }}
         >
           Scroll to explore the galaxy of IPL superstars
         </p>
@@ -231,14 +231,6 @@ const PlayerCard = ({ player, index, isActive }) => {
             </li>
           ))}
         </ul>
-        <div className={playerStyles.buttonContainer}>
-          <button 
-            className={playerStyles.profileButton}
-            style={{ backgroundColor: player.color }}
-          >
-            View Full Profile <FiArrowRight className={playerStyles.buttonIcon} />
-          </button>
-        </div>
       </div>
     </div>
   );

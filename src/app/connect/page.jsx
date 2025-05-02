@@ -68,7 +68,6 @@ export default function Connect() {
 
   return (
     <div className="connect-container">
-      {/* 3D Background */}
       <div className="spline-container">
         {isSplineLoaded ? null : (
           <div className="spline-placeholder">
@@ -79,17 +78,15 @@ export default function Connect() {
           scene="https://prod.spline.design/oK8AKT5SXaV33Ex7/scene.splinecode"
           onLoad={() => setIsSplineLoaded(true)}
           style={{ 
-            pointerEvents: 'auto', 
+            pointerEvents: 'auto',
           }}
         />
       </div>
 
-      {/* Main Content */}
       <div className="content-wrapper" 
         style={{ 
             pointerEvents: 'none', 
             }}>
-        {/* Navbar */}
         <nav className={styles.navbar}>
         <a href="/">
         <div className={styles.logo}>
@@ -106,7 +103,6 @@ export default function Connect() {
           <div className={styles.navLinksConnect}           
           style={{ 
             pointerEvents: 'auto', 
-            color: 'black',
             display: 'flex',
             gap: '32px',
           }}>
@@ -123,7 +119,6 @@ export default function Connect() {
           </button>
         </nav>
 
-        {/* Question Box */}
         {currentQuestion?.showIf !== false && (
           <div className={`question-box ${isSplineLoaded ? 'visible' : ''}`}>
             <h2>{currentQuestion.text}</h2>
@@ -226,7 +221,6 @@ export default function Connect() {
         )}
       </div>
 
-      {/* Footer - Fixed at bottom */}
       <footer className={styles.footer} style={{
         position: 'fixed',
         bottom: 0,
@@ -290,7 +284,7 @@ export default function Connect() {
           flex: 1;
           display: flex;
           flex-direction: column;
-          padding-bottom: 80px; /* Space for fixed footer */
+          padding-bottom: 80px;
         }
         
         .question-box {

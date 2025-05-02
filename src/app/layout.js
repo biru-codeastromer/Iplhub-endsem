@@ -1,21 +1,22 @@
-import { Rubik_80s_Fade, Audiowide } from 'next/font/google';
+import { Poiret_One, Recursive } from 'next/font/google';
 import './globals.css';
 
-export const rubik80sFade = Rubik_80s_Fade({
+export const poiretOne = Poiret_One({
   weight: '400',
-  subsets: ['latin'],
-  variable: '--font-rubik',
+  subsets: ['latin', 'latin-ext'],
+  variable: '--font-poiret',
 });
 
-export const audiowide = Audiowide({
-  weight: '400',
+export const recursive = Recursive({
+  weight: ['300', '400', '500', '600', '700', '800', '900'],
   subsets: ['latin'],
-  variable: '--font-audiowide',
+  variable: '--font-recursive',
+  display: 'swap',
 });
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${rubik80sFade.variable} ${audiowide.variable}`}>
+    <html lang="en" className={`${poiretOne.variable} ${recursive.variable}`}>
       <body>{children}</body>
     </html>
   );

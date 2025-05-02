@@ -1,11 +1,3 @@
-/* Add to your global.css or teams.module.css */
-:root {
-  --background: #0a0a0a;
-  --foreground: #ffffff;
-  --primary: #6d0f24; /* Dark maroon */
-  --secondary: #9d1d36; /* Brighter maroon */
-  --accent: #d1264d;
-}
 
 body {
   background-color: var(--background);

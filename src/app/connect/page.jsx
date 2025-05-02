@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import styles from "../page.module.css";
 import Image from "next/image";
 
-const Spline = dynamic(() => import('@splinetool/react-spline'), {
+const Spline = dynamic(() => import('@splinetool/react-spline').then(mod => mod.default), {
   ssr: false,
   loading: () => <div className="spline-loading">Loading 3D background...</div>
 });

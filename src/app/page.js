@@ -6,7 +6,7 @@ import { FiArrowRight, FiPlay, FiBarChart2, FiUsers, FiAward } from "react-icons
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollSmoother } from 'gsap/ScrollSmoother';
-
+import './globals.css';
 // Register plugins
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 

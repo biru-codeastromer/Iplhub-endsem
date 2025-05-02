@@ -1,18 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
 import styles from "../page.module.css";
 import Image from "next/image";
 
-const Spline = dynamic(() => import('@splinetool/react-spline').then(mod => mod.default), {
-  ssr: false,
-  loading: () => <div className="spline-loading">Loading 3D background...</div>
-});
-
 export default function Connect() {
   const [currentStep, setCurrentStep] = useState(0);
-  const [isSplineLoaded, setIsSplineLoaded] = useState(false);
   const [formData, setFormData] = useState({
     wantsToConnect: null,
     name: '',
@@ -68,66 +61,53 @@ export default function Connect() {
 
   return (
     <div className="connect-container">
-      <div className="spline-container">
-        {isSplineLoaded ? null : (
-          <div className="spline-placeholder">
-            Loading interactive background...
-          </div>
-        )}
-        <Spline
-          scene="https://prod.spline.design/oK8AKT5SXaV33Ex7/scene.splinecode"
-          onLoad={() => setIsSplineLoaded(true)}
-          style={{ 
-            pointerEvents: 'auto',
-          }}
-        />
+      {/* Background elements from your homepage theme */}
+      <div className="glowBackground">
+        <div className="glowPurple"></div>
+        <div className="glowBlue"></div>
       </div>
 
-      <div className="content-wrapper" 
-        style={{ 
-            pointerEvents: 'none', 
-            }}>
+      <div className="content-wrapper" style={{ pointerEvents: 'none' }}>
         <nav className={styles.navbar}>
-        <a href="/">
-        <div className={styles.logo}>
-          <Image
-            src="/IPL.jpeg"
-            alt="IPLHub Logo"
-            width={20}
-            height={20}
-            className={styles.logoImage}
-          />
-          <span className={styles.logoText}>IPLHub</span>
-        </div>
-        </a>
-          <div className={styles.navLinksConnect}           
-          style={{ 
-            pointerEvents: 'auto', 
-            display: 'flex',
-            gap: '32px',
-          }}>
+          <a href="/">
+            <div className={styles.logo}>
+              <Image
+                src="/IPL.jpeg"
+                alt="IPLHub Logo"
+                width={20}
+                height={20}
+                className={styles.logoImage}
+              />
+              <span className={styles.logoText}>IPLHub</span>
+            </div>
+          </a>
+          <div 
+            className={styles.navLinksConnect}           
+            style={{ 
+              pointerEvents: 'auto', 
+              display: 'flex',
+              gap: '32px',
+            }}
+          >
             <a href="./matches" className={styles.navLink}>Matches</a>
             <a href="./teams" className={styles.navLink}>Teams</a>
             <a href="./players" className={styles.navLink}>Players</a>
             <a href="./stats" className={styles.navLink}>Stats</a>
           </div>
-          <button className={`${styles.connectButton} ${styles.glowHover}`} 
-            style={{ 
-                pointerEvents: 'auto', 
-            }}>
+          <button 
+            className={`${styles.connectButton} ${styles.glowHover}`} 
+            style={{ pointerEvents: 'auto' }}
+          >
             Connect
           </button>
         </nav>
 
         {currentQuestion?.showIf !== false && (
-          <div className={`question-box ${isSplineLoaded ? 'visible' : ''}`}>
+          <div className="question-box visible">
             <h2>{currentQuestion.text}</h2>
 
             {currentQuestion.type === 'yesno' && (
-              <div className="button-group"
-              style={{ 
-                pointerEvents: 'auto', 
-              }}>
+              <div className="button-group" style={{ pointerEvents: 'auto' }}>
                 <button
                   onClick={() => handleInputChange(currentQuestion.field, 'yes')}
                   className="yes-button"
@@ -151,9 +131,7 @@ export default function Connect() {
                 onKeyPress={(e) => e.key === 'Enter' && formData.name && handleInputChange(currentQuestion.field, formData.name)}
                 placeholder="Type your answer here..."
                 className="question-input"
-                style={{ 
-                    pointerEvents: 'auto', 
-                  }}
+                style={{ pointerEvents: 'auto' }}
               />
             )}
 
@@ -165,9 +143,7 @@ export default function Connect() {
                 onKeyPress={(e) => e.key === 'Enter' && formData.email && handleInputChange(currentQuestion.field, formData.email)}
                 placeholder="Type your email here..."
                 className="question-input"
-                style={{ 
-                    pointerEvents: 'auto', 
-                  }}
+                style={{ pointerEvents: 'auto' }}
               />
             )}
 
@@ -179,16 +155,12 @@ export default function Connect() {
                   rows="4"
                   placeholder="Type your message here..."
                   className="question-textarea"
-                  style={{ 
-                    pointerEvents: 'auto', 
-                  }}
+                  style={{ pointerEvents: 'auto' }}
                 />
                 <button
                   onClick={() => formData.message && handleInputChange(currentQuestion.field, formData.message)}
                   className="submit-button"
-                  style={{ 
-                    pointerEvents: 'auto', 
-                  }}
+                  style={{ pointerEvents: 'auto' }}
                 >
                   SEND MESSAGE
                 </button>
@@ -209,9 +181,7 @@ export default function Connect() {
                     });
                   }}
                   className="restart-button"
-                  style={{ 
-                    pointerEvents: 'auto', 
-                  }}
+                  style={{ pointerEvents: 'auto' }}
                 >
                   START OVER
                 </button>
@@ -255,27 +225,38 @@ export default function Connect() {
           flex-direction: column;
         }
         
-        .spline-container {
+        /* Background styles from your homepage */
+        .glowBackground {
           position: fixed;
-          top: 0;
-          left: 0;
-          width: 100vw;
-          height: 100vh;
-          z-index: 0;
-        }
-        
-        .spline-placeholder {
-          position: absolute;
           top: 0;
           left: 0;
           width: 100%;
           height: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: #000;
-          color: #fff;
-          z-index: 1;
+          overflow: hidden;
+          opacity: 0.2;
+          z-index: 0;
+        }
+        
+        .glowPurple {
+          position: absolute;
+          top: 80px;
+          left: 40px;
+          width: 320px;
+          height: 320px;
+          background-color: var(--primary);
+          border-radius: 50%;
+          filter: blur(100px);
+        }
+        
+        .glowBlue {
+          position: absolute;
+          bottom: 40px;
+          right: 40px;
+          width: 384px;
+          height: 384px;
+          background-color: var(--secondary);
+          border-radius: 50%;
+          filter: blur(120px);
         }
         
         .content-wrapper {
@@ -301,12 +282,7 @@ export default function Connect() {
           backdrop-filter: blur(5px);
           border: 1px solid rgba(255, 255, 255, 0.2);
           z-index: 15;
-          opacity: 0;
-          transition: opacity 0.5s ease;
-        }
-        
-        .question-box.visible {
-          opacity: 1;
+          opacity: 1; /* Changed from 0 to 1 since we removed the loading state */
         }
         
         .question-box h2 {
@@ -374,12 +350,6 @@ export default function Connect() {
         .completion-message p {
           color: #fff;
           margin-bottom: 1rem;
-        }
-        
-        @keyframes float {
-          0% { transform: translate(-50%, -50%) translateY(0px); }
-          50% { transform: translate(-50%, -50%) translateY(-10px); }
-          100% { transform: translate(-50%, -50%) translateY(0px); }
         }
       `}</style>
     </div>

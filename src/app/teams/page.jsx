@@ -1,17 +1,9 @@
 "use client";
-import { useEffect, useRef, useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from "next/image";
-import styles from "./teams.module.css";
-import { FiArrowRight, FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import * as THREE from 'three';
-import dynamic from 'next/dynamic';
-import Starfield from '../../components/Starfield';
-
-
-const VantaBackground = dynamic(
-    () => import('../../components/VantaBackground'),
-    { ssr: false }
-  );
+import styles from '../page.module.css';
+import { FiArrowRight, FiChevronLeft, FiChevronRight, FiBarChart2, FiUsers, FiAward, FiSend, FiMessageSquare } from "react-icons/fi";
+import { poiretOne } from '../layout';
 
 // Team data
 const teams = [
@@ -206,119 +198,125 @@ const teams = [
   }
 ];
 
-// 3D Logo Component
-const TeamLogo3D = ({ logo, size = 'medium' }) => {
-    const sizeClasses = {
-      small: styles.logoSmall,
-      medium: styles.logoMedium,
-      large: styles.logoLarge
-    };
-  
-    return (
-      <div className={`${styles.logo3D} ${sizeClasses[size]}`}>
-        <Image 
-          src={logo} 
-          alt="Team Logo" 
-          className={styles.logoImage}
-          width={size === 'small' ? 60 : size === 'medium' ? 100 : 150}
-          height={size === 'small' ? 60 : size === 'medium' ? 100 : 150}
-        />
-      </div>
-    );
+
+
+export default function TeamsPage() {
+  const [activeTeam, setActiveTeam] = useState(teams[0]);
+  const sliderRef = useRef(null);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [activeTab, setActiveTab] = useState('teams');
+
+  // Handle slider navigation
+  const scrollSlider = (direction) => {
+    const container = sliderRef.current;
+    const scrollAmount = 300;
+    
+    if (direction === 'left') {
+      container.scrollLeft -= scrollAmount;
+    } else {
+      container.scrollLeft += scrollAmount;
+    }
+    
+    setScrollPosition(container.scrollLeft);
   };
-  
-  export default function TeamsPage() {
-    const [activeTeam, setActiveTeam] = useState(teams[0]);
-    const sliderRef = useRef(null);
-    const [scrollPosition, setScrollPosition] = useState(0);
-    const vantaRef = useRef(null);
-  
-    // Handle slider navigation
-    const scrollSlider = (direction) => {
-      const container = sliderRef.current;
-      const scrollAmount = 300;
+
+  // Update active team based on scroll position
+  const handleScroll = () => {
+    if (!sliderRef.current) return;
+    
+    const scrollPos = sliderRef.current.scrollLeft;
+    setScrollPosition(scrollPos);
+    
+    const teamElements = document.querySelectorAll(`.${styles.teamCard}`);
+    let mostVisibleIndex = 0;
+    let maxVisibility = 0;
+    
+    teamElements.forEach((el, index) => {
+      const rect = el.getBoundingClientRect();
+      const visibility = Math.min(rect.width, window.innerWidth - rect.left, rect.right);
       
-      if (direction === 'left') {
-        container.scrollLeft -= scrollAmount;
-      } else {
-        container.scrollLeft += scrollAmount;
+      if (visibility > maxVisibility) {
+        maxVisibility = visibility;
+        mostVisibleIndex = index;
       }
-      
-      setScrollPosition(container.scrollLeft);
-    };
-  
-    // Update active team based on scroll position
-    const handleScroll = () => {
-      if (!sliderRef.current) return;
-      
-      const scrollPos = sliderRef.current.scrollLeft;
-      setScrollPosition(scrollPos);
-      
-      const teamElements = document.querySelectorAll(`.${styles.teamCard}`);
-      let mostVisibleIndex = 0;
-      let maxVisibility = 0;
-      
-      teamElements.forEach((el, index) => {
-        const rect = el.getBoundingClientRect();
-        const visibility = Math.min(rect.width, window.innerWidth - rect.left, rect.right);
-        
-        if (visibility > maxVisibility) {
-          maxVisibility = visibility;
-          mostVisibleIndex = index;
-        }
-      });
-      
-      setActiveTeam(teams[mostVisibleIndex]);
-    };
-  
-    // Check if slider can scroll left/right
-    const canScrollLeft = scrollPosition > 0;
-    const canScrollRight = sliderRef.current && 
-      scrollPosition < (sliderRef.current.scrollWidth - sliderRef.current.clientWidth);
-  
-    return (
-        <div className={styles.container}>
-        {/* Vanta.js Background */}
-        <VantaBackground />
-        <Starfield />
-        {/* Navbar */}
-        <nav className={styles.navbar}>
+    });
+    
+    setActiveTeam(teams[mostVisibleIndex]);
+  };
+
+  // Check if slider can scroll left/right
+  const canScrollLeft = scrollPosition > 0;
+  const canScrollRight = sliderRef.current && 
+    scrollPosition < (sliderRef.current.scrollWidth - sliderRef.current.clientWidth);
+
+  return (
+    <div className={`${styles.container} ${poiretOne.className}`}>
+      {/* Glowing background elements */}
+      <div className={styles.glowBackground}>
+        <div className={styles.glowPurple}></div>
+        <div className={styles.glowBlue}></div>
+      </div>
+
+      {/* Navbar */}
+      <nav className={styles.navbar}>
         <a href="/">
           <div className={styles.logo}>
             <Image
-                src="/IPL.jpeg"
-                alt="IPLHub Logo"
-                width={20}
-                height={20}
-                className={styles.logoImage}
+              src="/IPL.jpeg"
+              alt="IPLHub Logo"
+              width={20}
+              height={20}
+              className={styles.logoImage}
             />
             <span className={styles.logoText}>IPLHub</span>
-            </div>
-        </a>
-          <div className={styles.navLinks}>
-            <a href="./matches" className={styles.navLink}>Matches</a>
-            <a href="./teams" className={`${styles.navLink} ${styles.activeLink}`}>Teams</a>
-            <a href="./players" className={styles.navLink}>Players</a>
-            <a href="./stats" className={styles.navLink}>Stats</a>
           </div>
-          <a href="./connect">
+        </a>
+        <div className={styles.navLinks}>
+          <a href="./matches" className={styles.navLink}>Matches</a>
+          <a href="./teams" className={`${styles.navLink} ${styles.activeLink}`}>Teams</a>
+          <a href="./players" className={styles.navLink}>Players</a>
+          <a href="./stats" className={styles.navLink}>Stats</a>
+        </div>
+        <a href="./connect">
           <button className={`${styles.connectButton} ${styles.glowHover}`}>Connect</button>
-          </a>
-        </nav>
-  
-        {/* Main Content */}
-        <main className={styles.mainContent}>
-          {/* Teams Slider Section */}
-          <section className={styles.teamsSliderSection}>
-            <h1 className={styles.sectionTitle}>
-              <span className={styles.gradientText}>IPL 2025</span> Teams
-            </h1>
-            
-            <div className={styles.sliderContainer}>
+        </a>
+      </nav>
+
+      {/* Main Content */}
+      <main className={styles.statsMain}>
+        <div className={styles.statsHeader}>
+          <h1 className={styles.statsTitle}>
+            <span className={styles.gradientText}>IPL Teams Hub</span>
+          </h1>
+          <p className={styles.statsSubtitle}>
+            Detailed team profiles, player rosters, and performance statistics
+          </p>
+        </div>
+
+        <div className={styles.statsTabs}>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'teams' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('teams')}
+          >
+            <FiUsers /> Teams Overview
+          </button>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'compare' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('compare')}
+          >
+            <FiBarChart2 /> Compare Teams
+          </button>
+        </div>
+
+        {activeTab === 'teams' ? (
+          <>
+            {/* Teams Slider Section */}
+            <div className={styles.sliderContainer} style={{ margin: '40px auto', maxWidth: '1200px' }}>
               <button 
-                className={`${styles.sliderButton} ${styles.leftButton} ${!canScrollLeft ? styles.disabled : ''}`}
+                className={`${styles.sliderButton} ${!canScrollLeft ? styles.disabled : ''}`}
                 onClick={() => scrollSlider('left')}
                 disabled={!canScrollLeft}
+                style={{ left: '-25px' }}
               >
                 <FiChevronLeft />
               </button>
@@ -327,160 +325,325 @@ const TeamLogo3D = ({ logo, size = 'medium' }) => {
                 className={styles.teamsSlider} 
                 ref={sliderRef}
                 onScroll={handleScroll}
+                style={{ display: 'flex', gap: '20px', padding: '20px 0', overflowX: 'auto' }}
               >
                 {teams.map((team) => (
                   <div 
                     key={team.id}
-                    className={`${styles.teamCard} ${activeTeam.id === team.id ? styles.active : ''}`}
+                    className={styles.teamCard}
                     onClick={() => setActiveTeam(team)}
                     style={{
-                      borderColor: activeTeam.id === team.id ? team.primaryColor : 'transparent',
+                      flex: '0 0 180px',
+                      height: '220px',
+                      border: `3px solid ${activeTeam.id === team.id ? team.primaryColor : 'transparent'}`,
                       boxShadow: activeTeam.id === team.id ? `0 0 20px ${team.primaryColor}80` : 'none'
                     }}
                   >
-                    <div className={styles.teamLogoContainer}>
-                      <TeamLogo3D logo={team.logo} />
+                    <div className={styles.teamLogoContainer} style={{ width: '100px', height: '100px', marginBottom: '15px' }}>
+                      <Image 
+                        src={team.logo} 
+                        alt="Team Logo" 
+                        width={100}
+                        height={100}
+                        style={{ borderRadius: '50%', objectFit: 'cover' }}
+                      />
                     </div>
-                    <h3 className={styles.teamName}>{team.shortName}</h3>
+                    <h3 className={styles.teamName} style={{ fontSize: '1.5rem', fontWeight: '700', margin: '10px 0 0' }}>
+                      {team.shortName}
+                    </h3>
                   </div>
                 ))}
               </div>
               
               <button 
-                className={`${styles.sliderButton} ${styles.rightButton} ${!canScrollRight ? styles.disabled : ''}`}
+                className={`${styles.sliderButton} ${!canScrollRight ? styles.disabled : ''}`}
                 onClick={() => scrollSlider('right')}
                 disabled={!canScrollRight}
+                style={{ right: '-25px' }}
               >
                 <FiChevronRight />
               </button>
             </div>
-          </section>
-  
-          {/* Active Team Details Section */}
-          <section 
-            className={styles.teamDetails}
-            style={{
-              background: `linear-gradient(135deg, ${activeTeam.primaryColor}20, ${activeTeam.secondaryColor}20)`,
-              borderColor: activeTeam.primaryColor
-            }}
-          >
-            <div className={styles.teamHeader}>
-              <div className={styles.teamLogoLarge}>
-                <TeamLogo3D logo={activeTeam.logo} size="large" />
-              </div>
-              <div className={styles.teamInfo}>
-                <h2 className={styles.teamFullName}>{activeTeam.name}</h2>
-                <div className={styles.teamMeta}>
-                  <span>Captain: <strong>{activeTeam.captain}</strong></span>
-                  <span>Coach: <strong>{activeTeam.coach}</strong></span>
-                  <span>Home: <strong>{activeTeam.homeGround}</strong></span>
+
+            {/* Active Team Details Section */}
+            <div 
+              className={styles.statSection} 
+              style={{
+                background: `linear-gradient(135deg, ${activeTeam.primaryColor}20, ${activeTeam.secondaryColor}20)`,
+                border: `1px solid ${activeTeam.primaryColor}`,
+                borderRadius: '20px',
+                padding: '30px',
+                margin: '20px auto',
+                maxWidth: '1200px'
+              }}
+            >
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '30px' }}>
+                <div style={{ width: '150px', height: '150px', marginBottom: '20px' }}>
+                  <Image 
+                    src={activeTeam.logo} 
+                    alt="Team Logo" 
+                    width={150}
+                    height={150}
+                    style={{ borderRadius: '50%', objectFit: 'cover' }}
+                  />
                 </div>
-                <div className={styles.trophyCount}>
-                  <span className={styles.trophyIcon}>🏆</span>
-                  <span>{activeTeam.trophies} IPL Title{activeTeam.trophies !== 1 ? 's' : ''}</span>
+                <div style={{ textAlign: 'center' }}>
+                  <h2 style={{ 
+                    fontSize: '2rem', 
+                    fontWeight: '700', 
+                    marginBottom: '10px',
+                    background: `linear-gradient(to right, ${activeTeam.primaryColor}, ${activeTeam.secondaryColor})`,
+                    WebkitBackgroundClip: 'text',
+                    backgroundClip: 'text',
+                    color: 'transparent'
+                  }}>
+                    {activeTeam.name}
+                  </h2>
+                  <div style={{ 
+                    display: 'flex', 
+                    flexWrap: 'wrap', 
+                    justifyContent: 'center', 
+                    gap: '15px', 
+                    marginBottom: '15px',
+                    fontSize: '0.9rem'
+                  }}>
+                    <span>Captain: <strong>{activeTeam.captain}</strong></span>
+                    <span>Coach: <strong>{activeTeam.coach}</strong></span>
+                    <span>Home: <strong>{activeTeam.homeGround}</strong></span>
+                  </div>
+                  <div style={{ 
+                    display: 'inline-flex', 
+                    alignItems: 'center', 
+                    gap: '8px', 
+                    padding: '8px 16px',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '9999px',
+                    fontWeight: '600'
+                  }}>
+                    <span>🏆</span>
+                    <span>{activeTeam.trophies} IPL Title{activeTeam.trophies !== 1 ? 's' : ''}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div style={{ marginBottom: '30px', fontSize: '1.1rem', lineHeight: '1.6' }}>
+                <p>{activeTeam.description}</p>
+              </div>
+              
+              <div style={{ marginBottom: '30px' }}>
+                <h3 style={{ 
+                  fontSize: '1.5rem', 
+                  fontWeight: '600', 
+                  marginBottom: '20px',
+                  position: 'relative',
+                  display: 'inline-block'
+                }}>
+                  Key Achievements
+                  <span style={{
+                    content: '',
+                    position: 'absolute',
+                    bottom: '-8px',
+                    left: '0',
+                    width: '50px',
+                    height: '3px',
+                    background: `linear-gradient(to right, ${activeTeam.primaryColor}, ${activeTeam.secondaryColor})`,
+                    borderRadius: '3px'
+                  }}></span>
+                </h3>
+                <ul style={{ listStyle: 'none', padding: '0' }}>
+                  {activeTeam.achievements.map((achievement, index) => (
+                    <li key={index} style={{ 
+                      marginBottom: '12px', 
+                      paddingLeft: '25px', 
+                      position: 'relative',
+                      lineHeight: '1.5'
+                    }}>
+                      <span style={{ 
+                        position: 'absolute',
+                        left: '0',
+                        top: '8px',
+                        width: '12px',
+                        height: '12px',
+                        borderRadius: '50%',
+                        backgroundColor: activeTeam.primaryColor
+                      }}></span>
+                      {achievement}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              <div style={{ marginBottom: '30px' }}>
+                <h3 style={{ 
+                  fontSize: '1.5rem', 
+                  fontWeight: '600', 
+                  marginBottom: '20px',
+                  position: 'relative',
+                  display: 'inline-block'
+                }}>
+                  Season Stats
+                  <span style={{
+                    content: '',
+                    position: 'absolute',
+                    bottom: '-8px',
+                    left: '0',
+                    width: '50px',
+                    height: '3px',
+                    background: `linear-gradient(to right, ${activeTeam.primaryColor}, ${activeTeam.secondaryColor})`,
+                    borderRadius: '3px'
+                  }}></span>
+                </h3>
+                <div style={{ 
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(4, 1fr)',
+                  gap: '15px'
+                }}>
+                  <div style={{ 
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{ fontSize: '1.8rem', fontWeight: '700', marginBottom: '5px' }}>2024</div>
+                    <div style={{ fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.7)' }}>Current Position</div>
+                  </div>
+                  <div style={{ 
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{ fontSize: '1.8rem', fontWeight: '700', marginBottom: '5px' }}>{activeTeam.trophies}</div>
+                    <div style={{ fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.7)' }}>Titles Won</div>
+                  </div>
+                  <div style={{ 
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{ fontSize: '1.8rem', fontWeight: '700', marginBottom: '5px' }}>{2024 - activeTeam.founded}</div>
+                    <div style={{ fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.7)' }}>Seasons Played</div>
+                  </div>
+                  <div style={{ 
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{ fontSize: '1.8rem', fontWeight: '700', marginBottom: '5px' }}>-</div>
+                    <div style={{ fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.7)' }}>Win Percentage</div>
+                  </div>
                 </div>
               </div>
             </div>
-            
-            <div className={styles.teamDescription}>
-              <p>{activeTeam.description}</p>
-            </div>
-            
-            <div className={styles.teamAchievements}>
-              <h3 className={styles.subSectionTitle}>Key Achievements</h3>
-              <ul className={styles.achievementsList}>
-                {activeTeam.achievements.map((achievement, index) => (
-                  <li key={index} className={styles.achievementItem}>
-                    <span className={styles.bulletPoint} style={{ backgroundColor: activeTeam.primaryColor }}></span>
-                    {achievement}
-                  </li>
+
+            {/* All Teams Grid */}
+            <div style={{ maxWidth: '1400px', margin: '60px auto', padding: '0 20px' }}>
+              <h2 style={{ 
+                fontSize: '2.5rem', 
+                fontWeight: '700', 
+                marginBottom: '2rem',
+                textAlign: 'center'
+              }}>
+                All <span style={{
+                  background: 'linear-gradient(to right, #6d0f24, #1a2a6c)',
+                  WebkitBackgroundClip: 'text',
+                  backgroundClip: 'text',
+                  color: 'transparent'
+                }}>Teams</span>
+              </h2>
+              
+              <div style={{ 
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+                gap: '20px'
+              }}>
+                {teams.map((team) => (
+                  <div 
+                    key={team.id} 
+                    style={{
+                      background: `linear-gradient(135deg, ${team.primaryColor}20, ${team.secondaryColor}20)`,
+                      borderTop: `4px solid ${team.primaryColor}`,
+                      borderRadius: '16px',
+                      padding: '25px',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onClick={() => {
+                      setActiveTeam(team);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                  >
+                    <div style={{ width: '70px', height: '70px', margin: '0 auto 15px' }}>
+                      <Image 
+                        src={team.logo} 
+                        alt="Team Logo" 
+                        width={70}
+                        height={70}
+                        style={{ borderRadius: '50%', objectFit: 'cover' }}
+                      />
+                    </div>
+                    <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '10px', textAlign: 'center' }}>
+                      {team.name}
+                    </h3>
+                    <div style={{ 
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      fontSize: '0.8rem',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      marginBottom: '15px'
+                    }}>
+                      <span>🏆 {team.trophies} Title{team.trophies !== 1 ? 's' : ''}</span>
+                      <span>👤 {team.captain}</span>
+                    </div>
+                    <button style={{
+                      width: '100%',
+                      padding: '8px 16px',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      border: 'none',
+                      borderRadius: '9999px',
+                      color: 'white',
+                      fontSize: '0.9rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '5px',
+                      cursor: 'pointer'
+                    }}>
+                      View Team <FiArrowRight />
+                    </button>
+                  </div>
                 ))}
-              </ul>
-            </div>
-            
-            <div className={styles.teamStats}>
-              <h3 className={styles.subSectionTitle}>Season Stats</h3>
-              <div className={styles.statsGrid}>
-                <div className={styles.statCard}>
-                  <div className={styles.statValue}>2024</div>
-                  <div className={styles.statLabel}>Current Position</div>
-                </div>
-                <div className={styles.statCard}>
-                  <div className={styles.statValue}>{activeTeam.trophies}</div>
-                  <div className={styles.statLabel}>Titles Won</div>
-                </div>
-                <div className={styles.statCard}>
-                  <div className={styles.statValue}>{2024 - activeTeam.founded}</div>
-                  <div className={styles.statLabel}>Seasons Played</div>
-                </div>
-                <div className={styles.statCard}>
-                  <div className={styles.statValue}>-</div>
-                  <div className={styles.statLabel}>Win Percentage</div>
-                </div>
               </div>
             </div>
-            
-            <div className={styles.teamSquad}>
-              <h3 className={styles.subSectionTitle}>Featured Players</h3>
-              <div className={styles.playersGrid}>
-                <div className={styles.playerCard}>
-                  <div className={styles.playerImage} style={{ backgroundColor: activeTeam.primaryColor }}></div>
-                  <div className={styles.playerName}>Captain</div>
-                  <div className={styles.playerRole}>Batsman</div>
-                </div>
-                <div className={styles.playerCard}>
-                  <div className={styles.playerImage} style={{ backgroundColor: activeTeam.primaryColor }}></div>
-                  <div className={styles.playerName}>Star Batsman</div>
-                  <div className={styles.playerRole}>Batsman</div>
-                </div>
-                <div className={styles.playerCard}>
-                  <div className={styles.playerImage} style={{ backgroundColor: activeTeam.primaryColor }}></div>
-                  <div className={styles.playerName}>Lead Bowler</div>
-                  <div className={styles.playerRole}>Bowler</div>
-                </div>
-                <div className={styles.playerCard}>
-                  <div className={styles.playerImage} style={{ backgroundColor: activeTeam.primaryColor }}></div>
-                  <div className={styles.playerName}>All-Rounder</div>
-                  <div className={styles.playerRole}>All-Rounder</div>
-                </div>
-              </div>
-            </div>
-          </section>
-  
-          {/* All Teams Section */}
-          <section className={styles.allTeamsSection}>
-            <h2 className={styles.sectionTitle}>All <span className={styles.gradientText}>Teams</span></h2>
-            
-            <div className={styles.allTeamsGrid}>
-              {teams.map((team) => (
-                <div 
-                  key={team.id} 
-                  className={styles.teamGridCard}
-                  style={{
-                    background: `linear-gradient(135deg, ${team.primaryColor}20, ${team.secondaryColor}20)`,
-                    borderTop: `4px solid ${team.primaryColor}`
-                  }}
-                  onClick={() => {
-                    setActiveTeam(team);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                >
-                  <div className={styles.teamGridLogo}>
-                    <TeamLogo3D logo={team.logo} size="small" />
-                  </div>
-                  <h3 className={styles.teamGridName}>{team.name}</h3>
-                  <div className={styles.teamGridMeta}>
-                    <span>🏆 {team.trophies} Title{team.trophies !== 1 ? 's' : ''}</span>
-                    <span>👤 {team.captain}</span>
-                  </div>
-                  <button className={styles.viewTeamButton}>
-                    View Team <FiArrowRight />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </section>
-        </main>
-      </div>
-    );
-  }
+          </>
+        ) : (
+          <div style={{ textAlign: 'center', padding: '40px' }}>
+            <h3>Team Comparison Feature Coming Soon</h3>
+            <p>Compare team stats, head-to-head records, and more!</p>
+          </div>
+        )}
+      </main>
+
+      {/* Footer */}
+      <footer className={styles.footer}>
+        <div className={styles.footerContent}>
+          <div className={styles.footerLogo}>
+            <Image
+              src="/IPL.jpeg"
+              alt="IPLHub Logo"
+              width={20}
+              height={20}
+              className={styles.logoImage}
+            />
+            <span className={styles.logoText}>IPLHub</span>
+          </div>
+          <div className={styles.footerCopyright}>
+            © {new Date().getFullYear()} IPLHub. All rights reserved.
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}

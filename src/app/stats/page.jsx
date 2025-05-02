@@ -23,19 +23,19 @@ export default function StatsPage() {
   useEffect(() => {
     setStatsData({
       topPlayers: [
-        { name: 'Virat Kohli', team: 'RCB', runs: 973, wickets: 0 },
-        { name: 'David Warner', team: 'DC', runs: 848, wickets: 0 },
-        { name: 'AB de Villiers', team: 'RCB', runs: 687, wickets: 0 }
+        { name: 'Suryakumar Yadav', team: 'MI', runs: 475 },
+        { name: 'Sai Sudharsan', team: 'GT', runs: 456 },
+        { name: 'Virat Kohli', team: 'RCB', runs: 443 }
       ],
       teamStats: [
-        { team: 'MI', wins: 5, losses: 2, points: 10 },
-        { team: 'CSK', wins: 4, losses: 3, points: 8 },
-        { team: 'RCB', wins: 4, losses: 3, points: 8 }
+        { team: 'MI', wins: 7, losses: 4, points: 14 },
+        { team: 'RCB', wins: 7, losses: 3, points: 14 },
+        { team: 'PBKS', wins: 6, losses: 3, points: 12 }
       ],
       recentMatches: [
-        { teams: 'MI vs CSK', result: 'MI won by 4 wickets' },
-        { teams: 'RCB vs KKR', result: 'RCB won by 38 runs' },
-        { teams: 'DC vs SRH', result: 'DC won by 7 wickets' }
+        { teams: 'RR vs MI', result: 'MI won by 100 runs' },
+        { teams: 'CSK vs PBKS', result: 'PBKS won by 4 wkts' },
+        { teams: 'KKR vs DC', result: 'KKR won by 14 runs' }
       ]
     });
   }, []);

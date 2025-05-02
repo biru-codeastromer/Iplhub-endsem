@@ -421,7 +421,7 @@ export default function Home() {
                 <span className={styles.highlightWord}>Live scores</span> and match predictions. Never miss a moment with our comprehensive schedule.
               </p>
               <p className={`${styles.sectionText} ${styles.glitchParagraph}`}>
-                <span className={styles.highlightWord}>Personalized tracking</span> for your favorite team's matches.
+                <span className={styles.highlightWord}>Personalized tracking</span> for your favorite team matches.
               </p>
               <a href="./matches" className={styles.sectionButton}>
                 <button className={`${styles.primaryButton} ${styles.glitchButton}`}>
